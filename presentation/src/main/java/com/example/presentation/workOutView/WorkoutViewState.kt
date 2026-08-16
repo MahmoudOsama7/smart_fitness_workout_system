@@ -66,8 +66,4 @@ sealed interface WorkoutAction {
     data object ResumeWorkout : WorkoutAction
 
     data object EndWorkout : WorkoutAction
-
-    data object HistoryClick : WorkoutAction
-
-    data object SettingsClick : WorkoutAction
 }
