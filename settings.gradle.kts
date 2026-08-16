@@ -19,6 +19,13 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+
 rootProject.name = "SmartFitnessApp"
 include(":app")
- 
+include(":data")
+include(":domain")
+include(":network")
+include(":database")
+include(":presentation")
