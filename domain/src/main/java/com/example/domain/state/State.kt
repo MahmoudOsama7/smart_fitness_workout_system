@@ -29,12 +29,12 @@ class ReadyState : WorkoutState {
 
 class ActiveSetState : WorkoutState {
     override fun completeSet(engine: WorkoutEngine) {
-        engine.completedSets += 1
-        if (engine.completedSets >= engine.routine.totalSets) {
-            engine.transitionTo(WorkoutCompletedState())
-        } else {
-            engine.startRestTimer(engine.routine.restDurationSeconds)
-        }
+//        engine.completedSets += 1
+//        if (engine.completedSets >= engine.routine.totalSets) {
+//            engine.transitionTo(WorkoutCompletedState())
+//        } else {
+//            engine.startRestTimer(engine.routine.restDurationSeconds)
+//        }
     }
 
     override fun pauseWorkout(engine: WorkoutEngine) {

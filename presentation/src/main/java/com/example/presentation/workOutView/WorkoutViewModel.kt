@@ -33,49 +33,49 @@ class WorkoutViewModel @Inject constructor(
     }
 
     private fun getWorkoutStatus() {
-        viewModelScope.launch {
-            observeWorkoutStateUseCase().collect { domainState ->
-                _uiState.update { currentUi ->
-                    when (domainState) {
-                        is ReadyState -> currentUi.copy(
-                            workoutState = WorkoutStateType.READY,
-                            currentSet = 1,
-                            completedSets = 0,
-                            exerciseName = observeWorkoutStateUseCase.getExerciseName(),
-                            totalSets = observeWorkoutStateUseCase.getTotalSets(),
-                            currentWeight = observeWorkoutStateUseCase.getCurrentWeight()
-                        )
-
-                        is ActiveSetState -> currentUi.copy(
-                            workoutState = WorkoutStateType.ACTIVE_SET,
-                            currentSet = observeWorkoutStateUseCase.getCurrentSet(),
-                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
-                        )
-
-                        is RestTimerState -> currentUi.copy(
-                            workoutState = WorkoutStateType.RESTING,
-                            remainingRestSeconds = domainState.remainingSeconds
-                        )
-
-                        is PausedState -> currentUi.copy(
-                            workoutState = WorkoutStateType.PAUSED
-                        )
-
-                        is WorkoutCompletedState -> currentUi.copy(
-                            workoutState = WorkoutStateType.COMPLETED,
-                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
-                        )
-
-                        else -> currentUi
-                    }
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            observeWorkoutStateUseCase().collect { domainState ->
+//                _uiState.update { currentUi ->
+//                    when (domainState) {
+//                        is ReadyState -> currentUi.copy(
+//                            workoutState = WorkoutStateType.READY,
+//                            currentSet = 1,
+//                            completedSets = 0,
+//                            exerciseName = observeWorkoutStateUseCase.getExerciseName(),
+//                            totalSets = observeWorkoutStateUseCase.getTotalSets(),
+//                            currentWeight = observeWorkoutStateUseCase.getCurrentWeight()
+//                        )
+//
+//                        is ActiveSetState -> currentUi.copy(
+//                            workoutState = WorkoutStateType.ACTIVE_SET,
+//                            currentSet = observeWorkoutStateUseCase.getCurrentSet(),
+//                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
+//                        )
+//
+//                        is RestTimerState -> currentUi.copy(
+//                            workoutState = WorkoutStateType.RESTING,
+//                            remainingRestSeconds = domainState.remainingSeconds
+//                        )
+//
+//                        is PausedState -> currentUi.copy(
+//                            workoutState = WorkoutStateType.PAUSED
+//                        )
+//
+//                        is WorkoutCompletedState -> currentUi.copy(
+//                            workoutState = WorkoutStateType.COMPLETED,
+//                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
+//                        )
+//
+//                        else -> currentUi
+//                    }
+//                }
+//            }
+//        }
     }
 
     fun onAction(action: WorkoutAction) {
-        when (action) {
-            else -> processWorkoutActionUseCase(action.toDomain())
-        }
+//        when (action) {
+//            else -> processWorkoutActionUseCase(action.toDomain())
+//        }
     }
 }

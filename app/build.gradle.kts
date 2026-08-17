@@ -48,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.di)
     implementation(projects.data)
     implementation(projects.network)
     implementation(projects.database)

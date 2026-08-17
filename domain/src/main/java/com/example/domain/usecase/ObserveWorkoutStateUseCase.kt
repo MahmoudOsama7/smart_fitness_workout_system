@@ -12,7 +12,4 @@ class ObserveWorkoutStateUseCase @Inject constructor(
 
     fun getCurrentSet(): Int = engine.currentSet
     fun getCompletedSets(): Int = engine.completedSets
-    fun getExerciseName(): String = engine.routine.exerciseName
-    fun getTotalSets(): Int = engine.routine.totalSets
-    fun getCurrentWeight(): String = "${engine.routine.baseWeightKg} kg"
 }

@@ -11,7 +11,7 @@ import javax.inject.Inject
 class ProcessWorkoutActionUseCase @Inject constructor(
     private val engine: WorkoutEngine,
     private val repository: WorkoutRepository,
-    private val scope: CoroutineScope
+//    private val scope: CoroutineScope
 ) {
     operator fun invoke(action: WorkoutAction) {
         when (action) {
@@ -24,14 +24,14 @@ class ProcessWorkoutActionUseCase @Inject constructor(
         }
     }
 
-    init {
-        scope.launch {
-            engine.currentState.collect { state ->
-                if (state is WorkoutCompletedState) {
-                    val duration = (System.currentTimeMillis() - engine.sessionStartTimeMs) / 1000
-
-                }
-            }
-        }
-    }
+//    init {
+//        scope.launch {
+//            engine.currentState.collect { state ->
+//                if (state is WorkoutCompletedState) {
+//                    val duration = (System.currentTimeMillis() - engine.sessionStartTimeMs) / 1000
+//
+//                }
+//            }
+//        }
+//    }
 }
