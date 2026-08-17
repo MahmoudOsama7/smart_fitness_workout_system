@@ -48,7 +48,9 @@ fun WorkoutViewScreen(
     Scaffold(
         topBar = {
             WorkoutTopBar(
-                onHistoryClick = {},
+                onHistoryClick = {
+                    contract.navigator.onNavigateToHistory()
+                },
                 onSettingsClick = {}
             )
         }

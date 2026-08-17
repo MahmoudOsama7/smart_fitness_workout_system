@@ -67,3 +67,7 @@ sealed interface WorkoutAction {
 
     data object EndWorkout : WorkoutAction
 }
+
+data class WorkoutNavigator(
+    val onNavigateToHistory: () -> Unit,
+)
