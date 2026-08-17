@@ -34,8 +34,7 @@ class ProcessWorkoutActionUseCase @Inject constructor(
                         elapsedTimeSeconds = durationSeconds,
                         remainingRestSeconds = 0
                     )
-
-                    repository.saveCompletedWorkout(completedSession)
+                    val insertedId = repository.saveCompletedWorkout(completedSession)
                 }
             }
         }

@@ -37,7 +37,6 @@ class WorkoutViewModel @Inject constructor(
         viewModelScope.launch {
             observeWorkoutStateUseCase().collect { domainState ->
                 _uiState.update { currentUi ->
-                    Log.d("debugging", "getWorkoutStatus: ")
                     when (domainState) {
                         is ReadyState -> currentUi.copy(
                             workoutState = WorkoutStateType.READY
