@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.data"
+    namespace = "com.example.core"
     compileSdk {
         version = release(36)
     }
@@ -37,8 +37,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.domain)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

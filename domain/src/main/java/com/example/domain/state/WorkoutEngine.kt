@@ -10,9 +10,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 
-class WorkoutEngine(
-    val routine: WorkoutRoutine = WorkoutRoutine(),
+class WorkoutEngine @Inject constructor(
     private val scope: CoroutineScope
 ) {
     private val _currentState = MutableStateFlow<WorkoutState>(ReadyState())
