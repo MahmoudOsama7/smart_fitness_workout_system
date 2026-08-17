@@ -1,5 +1,6 @@
 package com.example.presentation.workOutView
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.state.ActiveSetState
@@ -33,49 +34,54 @@ class WorkoutViewModel @Inject constructor(
     }
 
     private fun getWorkoutStatus() {
-//        viewModelScope.launch {
-//            observeWorkoutStateUseCase().collect { domainState ->
-//                _uiState.update { currentUi ->
-//                    when (domainState) {
-//                        is ReadyState -> currentUi.copy(
-//                            workoutState = WorkoutStateType.READY,
-//                            currentSet = 1,
-//                            completedSets = 0,
-//                            exerciseName = observeWorkoutStateUseCase.getExerciseName(),
-//                            totalSets = observeWorkoutStateUseCase.getTotalSets(),
-//                            currentWeight = observeWorkoutStateUseCase.getCurrentWeight()
-//                        )
-//
-//                        is ActiveSetState -> currentUi.copy(
-//                            workoutState = WorkoutStateType.ACTIVE_SET,
-//                            currentSet = observeWorkoutStateUseCase.getCurrentSet(),
-//                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
-//                        )
-//
-//                        is RestTimerState -> currentUi.copy(
-//                            workoutState = WorkoutStateType.RESTING,
-//                            remainingRestSeconds = domainState.remainingSeconds
-//                        )
-//
-//                        is PausedState -> currentUi.copy(
-//                            workoutState = WorkoutStateType.PAUSED
-//                        )
-//
-//                        is WorkoutCompletedState -> currentUi.copy(
-//                            workoutState = WorkoutStateType.COMPLETED,
-//                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
-//                        )
-//
-//                        else -> currentUi
-//                    }
-//                }
-//            }
-//        }
+        viewModelScope.launch {
+            observeWorkoutStateUseCase().collect { domainState ->
+                _uiState.update { currentUi ->
+                    when (domainState) {
+                        is ReadyState -> currentUi.copy(
+                            workoutState = WorkoutStateType.READY,
+                            currentSet = 1,
+                            completedSets = 0,
+                            exerciseName = "test",
+                            totalSets = 5,
+                            currentWeight = "60kg"
+                        )
+
+                        is ActiveSetState -> currentUi.copy(
+                            workoutState = WorkoutStateType.ACTIVE_SET,
+                            currentSet = observeWorkoutStateUseCase.getCurrentSet(),
+                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
+                        )
+
+                        is RestTimerState -> currentUi.copy(
+                            workoutState = WorkoutStateType.RESTING,
+                            remainingRestSeconds = domainState.remainingSeconds
+                        )
+
+                        is PausedState -> currentUi.copy(
+                            workoutState = WorkoutStateType.PAUSED
+                        )
+
+                        is WorkoutCompletedState -> currentUi.copy(
+                            workoutState = WorkoutStateType.COMPLETED,
+                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
+                        )
+
+                        else -> currentUi
+                    }
+                }
+            }
+        }
     }
 
     fun onAction(action: WorkoutAction) {
-//        when (action) {
-//            else -> processWorkoutActionUseCase(action.toDomain())
-//        }
+        when (action) {
+            WorkoutAction.CompleteSet -> Log.d("debugging", "1: ")
+            WorkoutAction.EndWorkout -> Log.d("debugging", "2: ")
+            WorkoutAction.PauseWorkout -> Log.d("debugging", "3: ")
+            WorkoutAction.ResumeWorkout -> Log.d("debugging", "4: ")
+            WorkoutAction.SkipRest -> Log.d("debugging", "5: ")
+            WorkoutAction.StartWorkout -> processWorkoutActionUseCase(action.toDomain())
+        }
     }
 }
