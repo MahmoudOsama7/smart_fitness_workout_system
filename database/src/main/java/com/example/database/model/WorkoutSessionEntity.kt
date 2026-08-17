@@ -8,10 +8,15 @@ data class WorkoutSessionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val exerciseName: String,
-    val currentSet: Int,
+    val completedSets: Int,
     val totalSets: Int,
     val weightKg: Double,
-    val completedSets: Int = 0,
-    val elapsedTimeSeconds: Long = 0L,
-    val remainingRestSeconds: Int = 60
+    val elapsedTimeSeconds: Long,
+    val timestamp: Long = System.currentTimeMillis(),
+    val syncStatus: SyncStatusEntity = SyncStatusEntity.PENDING_SYNC
 )
+
+enum class SyncStatusEntity {
+    SYNCED,
+    PENDING_SYNC
+}

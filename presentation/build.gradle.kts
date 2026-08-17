@@ -37,6 +37,21 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+
+    }
+
+    flavorDimensions += "environment"
+    
+    productFlavors {
+        create("Production") {
+            dimension = "environment"
+            buildConfigField("String", "BASE_URL", "${properties["PRODUCTION_BASE_URL"]}")
+        }
+        create("Demo") {
+            dimension = "environment"
+            buildConfigField("String", "BASE_URL", "${properties["DEMO_BASE_URL"]}")
+        }
     }
 }
 
