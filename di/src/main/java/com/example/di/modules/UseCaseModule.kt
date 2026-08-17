@@ -21,11 +21,13 @@ object UseCaseModule {
     @Singleton
     fun provideProcessWorkoutActionUseCase(
         workoutRepository: WorkoutRepository,
-        engine: WorkoutEngine
+        engine: WorkoutEngine,
+        scope: CoroutineScope
     ): ProcessWorkoutActionUseCase {
         return ProcessWorkoutActionUseCase(
             repository = workoutRepository,
-            engine = engine
+            engine = engine,
+            scope = scope
         )
     }
 

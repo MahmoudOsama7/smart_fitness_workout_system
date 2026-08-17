@@ -1,5 +1,7 @@
 package com.example.domain.repository
 
+import com.example.domain.model.WorkoutSession
+
 interface WorkoutRepository {
-    fun saveCompletedWorkout()
+    suspend fun saveCompletedWorkout(workoutSession: WorkoutSession)
 }
