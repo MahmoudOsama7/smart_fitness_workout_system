@@ -34,6 +34,11 @@ android {
         jvmTarget = "11"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
+    flavorDimensions += "environment"
     productFlavors {
         create("Production") {
             dimension = "environment"
