@@ -1,5 +1,6 @@
 package com.example.domain.state
 
+import com.example.domain.model.WorkoutSession
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -11,15 +12,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class WorkoutEngine @Inject constructor(
     private val scope: CoroutineScope
 ) {
+    var session: WorkoutSession = WorkoutSession(
+        exerciseName = "Barbell Squat",
+        currentSet = 1,
+        totalSets = 5,
+        weightKg = 60.0
+    )
     private val _currentState = MutableStateFlow<WorkoutState>(ReadyState())
     val currentState: StateFlow<WorkoutState> = _currentState.asStateFlow()
 
-    var currentSet: Int = 1
-    var completedSets: Int = 0
     var sessionStartTimeMs: Long = 0L
     private var timerJob: Job? = null
 
@@ -38,7 +45,7 @@ class WorkoutEngine @Inject constructor(
 
     fun startRestTimer(durationSeconds: Int) {
         stopRestTimer()
-        transitionTo(RestTimerState(durationSeconds))
+        transitionTo(RestTimerState(session = session, remainingSeconds = durationSeconds))
 
         timerJob = scope.launch {
             var timeLeft = durationSeconds

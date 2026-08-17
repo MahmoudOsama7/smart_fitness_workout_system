@@ -9,7 +9,4 @@ class ObserveWorkoutStateUseCase @Inject constructor(
     private val engine: WorkoutEngine
 ) {
     operator fun invoke(): StateFlow<WorkoutState> = engine.currentState
-
-    fun getCurrentSet(): Int = engine.currentSet
-    fun getCompletedSets(): Int = engine.completedSets
 }

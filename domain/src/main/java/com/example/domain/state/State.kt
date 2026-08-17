@@ -1,12 +1,6 @@
 package com.example.domain.state
 
-data class WorkoutRoutine(
-    val exerciseName: String = "Barbell Back Squat",
-    val totalSets: Int = 4,
-    val targetReps: Int = 8,
-    val baseWeightKg: Double = 100.0,
-    val restDurationSeconds: Int = 60
-)
+import com.example.domain.model.WorkoutSession
 
 interface WorkoutState {
     fun startWorkout(engine: WorkoutEngine) {}
@@ -21,20 +15,27 @@ interface WorkoutState {
 class ReadyState : WorkoutState {
     override fun startWorkout(engine: WorkoutEngine) {
         engine.sessionStartTimeMs = System.currentTimeMillis()
-        engine.currentSet = 1
-        engine.completedSets = 0
-        engine.transitionTo(ActiveSetState())
+
+        engine.session = engine.session.copy(
+            currentSet = 1,
+            completedSets = 0
+        )
+
+        engine.transitionTo(ActiveSetState(engine.session))
     }
 }
 
-class ActiveSetState : WorkoutState {
+data class ActiveSetState(val session: WorkoutSession) : WorkoutState {
     override fun completeSet(engine: WorkoutEngine) {
-//        engine.completedSets += 1
-//        if (engine.completedSets >= engine.routine.totalSets) {
-//            engine.transitionTo(WorkoutCompletedState())
-//        } else {
-//            engine.startRestTimer(engine.routine.restDurationSeconds)
-//        }
+        val updatedCompletedSets = engine.session.completedSets + 1
+
+        engine.session = engine.session.copy(completedSets = updatedCompletedSets)
+
+        if (updatedCompletedSets >= engine.session.totalSets) {
+            engine.transitionTo(WorkoutCompletedState(engine.session))
+        } else {
+            engine.startRestTimer(engine.session.remainingRestSeconds)
+        }
     }
 
     override fun pauseWorkout(engine: WorkoutEngine) {
@@ -42,7 +43,11 @@ class ActiveSetState : WorkoutState {
     }
 }
 
-class RestTimerState(val remainingSeconds: Int) : WorkoutState {
+data class RestTimerState(
+    val session: WorkoutSession,
+    val remainingSeconds: Int
+) : WorkoutState {
+
     override fun skipRest(engine: WorkoutEngine) {
         engine.stopRestTimer()
         advanceSet(engine)
@@ -53,7 +58,12 @@ class RestTimerState(val remainingSeconds: Int) : WorkoutState {
             engine.stopRestTimer()
             advanceSet(engine)
         } else {
-            engine.transitionTo(RestTimerState(remainingSeconds))
+            engine.transitionTo(
+                RestTimerState(
+                    session = engine.session.copy(remainingRestSeconds = remainingSeconds),
+                    remainingSeconds = remainingSeconds
+                )
+            )
         }
     }
 
@@ -63,12 +73,13 @@ class RestTimerState(val remainingSeconds: Int) : WorkoutState {
     }
 
     private fun advanceSet(engine: WorkoutEngine) {
-        engine.currentSet += 1
-        engine.transitionTo(ActiveSetState())
+        val nextSet = engine.session.currentSet + 1
+        engine.session = engine.session.copy(currentSet = nextSet)
+        engine.transitionTo(ActiveSetState(engine.session))
     }
 }
 
-class PausedState(val previousState: WorkoutState) : WorkoutState {
+data class PausedState(val previousState: WorkoutState) : WorkoutState {
     override fun resumeWorkout(engine: WorkoutEngine) {
         if (previousState is RestTimerState) {
             engine.startRestTimer(previousState.remainingSeconds)
@@ -79,8 +90,8 @@ class PausedState(val previousState: WorkoutState) : WorkoutState {
 
     override fun endWorkout(engine: WorkoutEngine) {
         engine.stopRestTimer()
-        engine.transitionTo(WorkoutCompletedState())
+        engine.transitionTo(WorkoutCompletedState(engine.session))
     }
 }
 
-class WorkoutCompletedState : WorkoutState
+data class WorkoutCompletedState(val session: WorkoutSession) : WorkoutState
