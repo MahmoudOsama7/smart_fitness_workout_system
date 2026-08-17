@@ -1,3 +1,4 @@
+// com/example/presentation/workOutView/WorkoutViewModel.kt
 package com.example.presentation.workOutView
 
 import android.util.Log
@@ -28,7 +29,6 @@ class WorkoutViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(WorkoutUiState())
     val uiState: StateFlow<WorkoutUiState> = _uiState.asStateFlow()
 
-
     init {
         getWorkoutStatus()
     }
@@ -37,20 +37,19 @@ class WorkoutViewModel @Inject constructor(
         viewModelScope.launch {
             observeWorkoutStateUseCase().collect { domainState ->
                 _uiState.update { currentUi ->
+                    Log.d("debugging", "getWorkoutStatus: ")
                     when (domainState) {
                         is ReadyState -> currentUi.copy(
-                            workoutState = WorkoutStateType.READY,
-                            currentSet = 1,
-                            completedSets = 0,
-                            exerciseName = "test",
-                            totalSets = 5,
-                            currentWeight = "60kg"
+                            workoutState = WorkoutStateType.READY
                         )
 
                         is ActiveSetState -> currentUi.copy(
                             workoutState = WorkoutStateType.ACTIVE_SET,
-                            currentSet = observeWorkoutStateUseCase.getCurrentSet(),
-                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
+                            exerciseName = domainState.session.exerciseName,
+                            currentSet = domainState.session.currentSet,
+                            totalSets = domainState.session.totalSets,
+                            completedSets = domainState.session.completedSets,
+                            currentWeight = "${domainState.session.weightKg}kg"
                         )
 
                         is RestTimerState -> currentUi.copy(
@@ -64,7 +63,8 @@ class WorkoutViewModel @Inject constructor(
 
                         is WorkoutCompletedState -> currentUi.copy(
                             workoutState = WorkoutStateType.COMPLETED,
-                            completedSets = observeWorkoutStateUseCase.getCompletedSets()
+                            completedSets = domainState.session.completedSets,
+                            exerciseName = domainState.session.exerciseName
                         )
 
                         else -> currentUi
@@ -75,13 +75,6 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun onAction(action: WorkoutAction) {
-        when (action) {
-            WorkoutAction.CompleteSet -> Log.d("debugging", "1: ")
-            WorkoutAction.EndWorkout -> Log.d("debugging", "2: ")
-            WorkoutAction.PauseWorkout -> Log.d("debugging", "3: ")
-            WorkoutAction.ResumeWorkout -> Log.d("debugging", "4: ")
-            WorkoutAction.SkipRest -> Log.d("debugging", "5: ")
-            WorkoutAction.StartWorkout -> processWorkoutActionUseCase(action.toDomain())
-        }
+        processWorkoutActionUseCase(action.toDomain())
     }
 }
