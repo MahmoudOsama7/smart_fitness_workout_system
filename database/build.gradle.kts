@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -60,4 +61,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.room.ktx)
     kapt(libs.room.compiler)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.bundles.hilt)
 }

@@ -21,6 +21,7 @@ class ProcessWorkoutActionUseCase @Inject constructor(
             WorkoutAction.PauseWorkout -> engine.pauseWorkout()
             WorkoutAction.ResumeWorkout -> engine.resumeWorkout()
             WorkoutAction.EndWorkout -> engine.endWorkout()
+            WorkoutAction.RefreshSettings -> {}
         }
     }
 

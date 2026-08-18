@@ -10,4 +10,5 @@ fun PresentationAction.toDomain(): DomainAction = when (this) {
     PresentationAction.PauseWorkout -> DomainAction.PauseWorkout
     PresentationAction.ResumeWorkout -> DomainAction.ResumeWorkout
     PresentationAction.EndWorkout -> DomainAction.EndWorkout
+    PresentationAction.RefreshSettings -> DomainAction.RefreshSettings
 }
