@@ -10,6 +10,7 @@ interface WorkoutState {
     fun resumeWorkout(engine: WorkoutEngine) {}
     fun endWorkout(engine: WorkoutEngine) {}
     fun onTimerTick(engine: WorkoutEngine, remainingSeconds: Int) {}
+    fun onTimerFinished(engine: WorkoutEngine) {}
 }
 
 class ReadyState : WorkoutState {
@@ -28,11 +29,18 @@ class ReadyState : WorkoutState {
 data class ActiveSetState(val session: WorkoutSession) : WorkoutState {
     override fun completeSet(engine: WorkoutEngine) {
         val updatedCompletedSets = engine.session.completedSets + 1
-
         engine.session = engine.session.copy(completedSets = updatedCompletedSets)
 
         if (updatedCompletedSets >= engine.session.totalSets) {
-            engine.transitionTo(WorkoutCompletedState(engine.session))
+            val durationSeconds = (System.currentTimeMillis() - engine.sessionStartTimeMs) / 1000
+
+            val finalSession = engine.session.copy(
+                elapsedTimeSeconds = durationSeconds,
+                remainingRestSeconds = 0
+            )
+            engine.session = finalSession
+
+            engine.transitionTo(WorkoutCompletedState(finalSession))
         } else {
             engine.startRestTimer(engine.session.remainingRestSeconds)
         }
@@ -49,26 +57,23 @@ data class RestTimerState(
 ) : WorkoutState {
 
     override fun skipRest(engine: WorkoutEngine) {
-        engine.stopRestTimer()
         advanceSet(engine)
     }
 
     override fun onTimerTick(engine: WorkoutEngine, remainingSeconds: Int) {
-        if (remainingSeconds <= 0) {
-            engine.stopRestTimer()
-            advanceSet(engine)
-        } else {
-            engine.transitionTo(
-                RestTimerState(
-                    session = engine.session.copy(remainingRestSeconds = remainingSeconds),
-                    remainingSeconds = remainingSeconds
-                )
+        engine.transitionTo(
+            RestTimerState(
+                session = engine.session.copy(remainingRestSeconds = remainingSeconds),
+                remainingSeconds = remainingSeconds
             )
-        }
+        )
+    }
+
+    override fun onTimerFinished(engine: WorkoutEngine) {
+        advanceSet(engine)
     }
 
     override fun pauseWorkout(engine: WorkoutEngine) {
-        engine.stopRestTimer()
         engine.transitionTo(PausedState(previousState = this))
     }
 
@@ -90,7 +95,15 @@ data class PausedState(val previousState: WorkoutState) : WorkoutState {
 
     override fun endWorkout(engine: WorkoutEngine) {
         engine.stopRestTimer()
-        engine.transitionTo(WorkoutCompletedState(engine.session))
+
+        val durationSeconds = (System.currentTimeMillis() - engine.sessionStartTimeMs) / 1000
+        val finalSession = engine.session.copy(
+            elapsedTimeSeconds = durationSeconds,
+            remainingRestSeconds = 0
+        )
+        engine.session = finalSession
+
+        engine.transitionTo(WorkoutCompletedState(finalSession))
     }
 }
 

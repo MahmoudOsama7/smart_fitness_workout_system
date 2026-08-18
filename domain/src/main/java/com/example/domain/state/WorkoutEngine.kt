@@ -25,27 +25,61 @@ class WorkoutEngine @Inject constructor(
         totalSets = 5,
         weightKg = 60.0
     )
+
     private val _currentState = MutableStateFlow<WorkoutState>(ReadyState())
     val currentState: StateFlow<WorkoutState> = _currentState.asStateFlow()
 
     var sessionStartTimeMs: Long = 0L
     private var timerJob: Job? = null
-
     private val stateMutex = Mutex()
 
     fun transitionTo(newState: WorkoutState) {
         _currentState.value = newState
     }
 
-    fun startWorkout() = scope.launch { stateMutex.withLock { _currentState.value.startWorkout(this@WorkoutEngine) } }
-    fun completeSet() = scope.launch { stateMutex.withLock { _currentState.value.completeSet(this@WorkoutEngine) } }
-    fun skipRest() = scope.launch { stateMutex.withLock { _currentState.value.skipRest(this@WorkoutEngine) } }
-    fun pauseWorkout() = scope.launch { stateMutex.withLock { _currentState.value.pauseWorkout(this@WorkoutEngine) } }
-    fun resumeWorkout() = scope.launch { stateMutex.withLock { _currentState.value.resumeWorkout(this@WorkoutEngine) } }
-    fun endWorkout() = scope.launch { stateMutex.withLock { _currentState.value.endWorkout(this@WorkoutEngine) } }
+    fun startWorkout() = scope.launch {
+        stateMutex.withLock {
+            _currentState.value.startWorkout(this@WorkoutEngine)
+        }
+    }
+
+    fun completeSet() = scope.launch {
+        stateMutex.withLock {
+            _currentState.value.completeSet(this@WorkoutEngine)
+        }
+    }
+
+    fun skipRest() = scope.launch {
+        stateMutex.withLock {
+            if (_currentState.value is RestTimerState) {
+                stopRestTimerInternal()
+                _currentState.value.skipRest(this@WorkoutEngine)
+            }
+        }
+    }
+
+    fun pauseWorkout() = scope.launch {
+        stateMutex.withLock {
+            stopRestTimerInternal()
+            _currentState.value.pauseWorkout(this@WorkoutEngine)
+        }
+    }
+
+    fun resumeWorkout() = scope.launch {
+        stateMutex.withLock {
+            _currentState.value.resumeWorkout(this@WorkoutEngine)
+        }
+    }
+
+    fun endWorkout() = scope.launch {
+        stateMutex.withLock {
+            stopRestTimerInternal()
+            _currentState.value.endWorkout(this@WorkoutEngine)
+        }
+    }
 
     fun startRestTimer(durationSeconds: Int) {
-        stopRestTimer()
+        stopRestTimerInternal()
         transitionTo(RestTimerState(session = session, remainingSeconds = durationSeconds))
 
         timerJob = scope.launch {
@@ -53,9 +87,16 @@ class WorkoutEngine @Inject constructor(
             while (isActive && timeLeft > 0) {
                 delay(1000L)
                 timeLeft--
+
                 stateMutex.withLock {
-                    if (_currentState.value is RestTimerState) {
-                        _currentState.value.onTimerTick(this@WorkoutEngine, timeLeft)
+                    val activeState = _currentState.value
+                    if (activeState is RestTimerState) {
+                        if (timeLeft == 0) {
+                            stopRestTimerInternal()
+                            activeState.onTimerFinished(this@WorkoutEngine)
+                        } else {
+                            activeState.onTimerTick(this@WorkoutEngine, timeLeft)
+                        }
                     }
                 }
             }
@@ -63,6 +104,14 @@ class WorkoutEngine @Inject constructor(
     }
 
     fun stopRestTimer() {
+        scope.launch {
+            stateMutex.withLock {
+                stopRestTimerInternal()
+            }
+        }
+    }
+
+    private fun stopRestTimerInternal() {
         timerJob?.cancel()
         timerJob = null
     }
