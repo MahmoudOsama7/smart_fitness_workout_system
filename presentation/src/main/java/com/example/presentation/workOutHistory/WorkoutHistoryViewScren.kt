@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.SyncStatus
+import com.example.domain.model.WeightUnit
 import com.example.domain.model.WorkoutSession
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,7 +48,6 @@ import java.util.Locale
 fun WorkoutHistoryContent(
     contract: WorkoutHistoryContract
 ) {
-
     LaunchedEffect(Unit) {
         contract.onAction(WorkoutHistoryAction.GetWorkoutHistory)
     }
@@ -65,7 +66,8 @@ fun WorkoutHistoryContent(
                 },
                 actions = {
                     IconButton(
-                        onClick = { contract.onAction(WorkoutHistoryAction.SyncWorkoutList) }
+                        onClick = { contract.onAction(WorkoutHistoryAction.SyncWorkoutList) },
+                        enabled = !contract.state.isLoading
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
@@ -82,22 +84,32 @@ fun WorkoutHistoryContent(
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            if (contract.state.workouts.isEmpty()) {
-                Text(
-                    text = "No completed workouts yet.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(
-                        items = contract.state.workouts
-                    ) { session ->
-                        WorkoutHistoryCard(session = session)
+            when {
+                contract.state.isLoading -> {
+                    CircularProgressIndicator()
+                }
+                contract.state.workouts.isEmpty() -> {
+                    Text(
+                        text = "No completed workouts yet.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = contract.state.workouts,
+                            key = { it.id }
+                        ) { session ->
+                            WorkoutHistoryCard(
+                                session = session,
+                                weightUnit = contract.state.weightUnit
+                            )
+                        }
                     }
                 }
             }
@@ -108,6 +120,7 @@ fun WorkoutHistoryContent(
 @Composable
 fun WorkoutHistoryCard(
     session: WorkoutSession,
+    weightUnit: WeightUnit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -145,7 +158,7 @@ fun WorkoutHistoryCard(
                 )
                 MetricColumn(
                     label = "Weight",
-                    value = "${session.weightKg} kg"
+                    value = formatWeightValue(session.weightKg, weightUnit)
                 )
                 MetricColumn(
                     label = "Duration",
@@ -193,9 +206,15 @@ private fun SyncBadge(syncStatus: SyncStatus) {
     } else {
         MaterialTheme.colorScheme.tertiaryContainer
     }
+    val contentColor = if (isSynced) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onTertiaryContainer
+    }
 
     Surface(
         color = containerColor,
+        contentColor = contentColor,
         shape = RoundedCornerShape(16.dp)
     ) {
         Row(
@@ -213,6 +232,13 @@ private fun SyncBadge(syncStatus: SyncStatus) {
                 style = MaterialTheme.typography.labelSmall
             )
         }
+    }
+}
+
+private fun formatWeightValue(weightInKg: Double, weightUnit: WeightUnit): String {
+    return when (weightUnit) {
+        WeightUnit.KG -> "${"%.1f".format(weightInKg)} kg"
+        WeightUnit.LBS -> "${"%.1f".format(weightInKg * 2.20462)} lbs"
     }
 }
 

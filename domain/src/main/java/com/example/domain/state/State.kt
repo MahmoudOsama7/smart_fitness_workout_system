@@ -10,6 +10,7 @@ interface WorkoutState {
     fun resumeWorkout(engine: WorkoutEngine) {}
     fun endWorkout(engine: WorkoutEngine) {}
     fun onTimerTick(engine: WorkoutEngine, remainingSeconds: Int) {}
+    fun onTimerFinished(engine: WorkoutEngine) {}
 }
 
 class ReadyState : WorkoutState {
@@ -49,26 +50,23 @@ data class RestTimerState(
 ) : WorkoutState {
 
     override fun skipRest(engine: WorkoutEngine) {
-        engine.stopRestTimer()
         advanceSet(engine)
     }
 
     override fun onTimerTick(engine: WorkoutEngine, remainingSeconds: Int) {
-        if (remainingSeconds <= 0) {
-            engine.stopRestTimer()
-            advanceSet(engine)
-        } else {
-            engine.transitionTo(
-                RestTimerState(
-                    session = engine.session.copy(remainingRestSeconds = remainingSeconds),
-                    remainingSeconds = remainingSeconds
-                )
+        engine.transitionTo(
+            RestTimerState(
+                session = engine.session.copy(remainingRestSeconds = remainingSeconds),
+                remainingSeconds = remainingSeconds
             )
-        }
+        )
+    }
+
+    override fun onTimerFinished(engine: WorkoutEngine) {
+        advanceSet(engine)
     }
 
     override fun pauseWorkout(engine: WorkoutEngine) {
-        engine.stopRestTimer()
         engine.transitionTo(PausedState(previousState = this))
     }
 
