@@ -37,6 +37,12 @@ Build commands
 generated apks are found inside app/build/outputs/apk
 
 
+Logic for network sync 
+1-using build variant to declare either will use real network or mock network
+2-then by providing buildConfig and being called inside network module 
+3- to process either using real or mock 
+
+
 State Pattern illustration 
 
 ## State Pattern Architecture
