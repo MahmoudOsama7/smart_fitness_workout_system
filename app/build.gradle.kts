@@ -51,11 +51,17 @@ android {
     productFlavors {
         create("Production") {
             dimension = "environment"
+            applicationIdSuffix = ".production"
+            manifestPlaceholders["appName"] = "Fitness Pro"
             buildConfigField("String", "BASE_URL", "${properties["PRODUCTION_BASE_URL"]}")
+            buildConfigField("Boolean", "IS_OFFLINE_MODE", "false")
         }
         create("Demo") {
             dimension = "environment"
+            applicationIdSuffix = ".demo"
+            manifestPlaceholders["appName"] = "Fitness Demo"
             buildConfigField("String", "BASE_URL", "${properties["DEMO_BASE_URL"]}")
+            buildConfigField("Boolean", "IS_OFFLINE_MODE", "true")
         }
     }
 }
