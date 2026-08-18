@@ -1,7 +1,7 @@
 package com.example.di.modules
 
-
 import com.example.data.apiService.WorkoutSyncApi
+import com.example.network.BuildConfig
 import com.example.network.MockSyncBackendInterceptor
 import dagger.Module
 import dagger.Provides
@@ -22,11 +22,15 @@ object NetworkModule {
     fun provideOkHttpClient(
         mockInterceptor: MockSyncBackendInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(mockInterceptor)
+        val builder = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
-            .build()
+
+        if (BuildConfig.IS_OFFLINE_MODE) {
+            builder.addInterceptor(mockInterceptor)
+        }
+
+        return builder.build()
     }
 
     @Provides
@@ -34,8 +38,9 @@ object NetworkModule {
     fun provideWorkoutSyncApi(
         okHttpClient: OkHttpClient
     ): WorkoutSyncApi {
+        val baseUrl =  BuildConfig.BASE_URL
         return Retrofit.Builder()
-            .baseUrl("https://mock.backend.api/")
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

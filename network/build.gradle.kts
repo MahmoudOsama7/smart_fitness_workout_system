@@ -45,10 +45,12 @@ android {
         create("Production") {
             dimension = "environment"
             buildConfigField("String", "BASE_URL", "${properties["PRODUCTION_BASE_URL"]}")
+            buildConfigField("Boolean", "IS_OFFLINE_MODE", "false")
         }
         create("Demo") {
             dimension = "environment"
             buildConfigField("String", "BASE_URL", "${properties["DEMO_BASE_URL"]}")
+            buildConfigField("Boolean", "IS_OFFLINE_MODE", "true")
         }
     }
 }
