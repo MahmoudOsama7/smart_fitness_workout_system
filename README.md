@@ -33,3 +33,33 @@ Build commands
 2- Build Debug APK Production -> ./gradlew assembleProductionDebug
 3- Build Release APK Demo -> ./gradlew assembleDemoRelease
 4- Build Release APK Production -> ./gradlew assembleProductionRelease
+
+generated apks are found inside app/build/outputs/apk
+
+
+State Pattern illustration 
+
+## State Pattern Architecture
+
+The workout session lifecycle is managed using the State Pattern. Behavior is encapsulated inside specific state objects, allowing the system to change its rules dynamically as the workout progresses without using complex conditional logic.
+
+### State Transitions Flow
+
+1. **ReadyState**: Initial idle state. Triggering `startWorkout()` resets set counts and transitions to `ActiveSetState`.
+2. **ActiveSetState**: Represents an active exercise set.
+    - `completeSet()` increments the completed sets counter. If sets remain, it launches the rest timer and transitions to `RestTimerState`. If all sets are complete, it transitions to `WorkoutCompletedState`.
+    - `pauseWorkout()` transitions to `PausedState`.
+3. **RestTimerState**: Manages the interval countdown between sets.
+    - Ticks update the remaining rest duration.
+    - When the countdown reaches zero or when `skipRest()` is called, it increments the current set and transitions back to `ActiveSetState`.
+4. **PausedState**: Holds a reference to the `previousState` (whether `ActiveSetState` or `RestTimerState`) so `resumeWorkout()` restores the exact state and remaining timer duration.
+5. **WorkoutCompletedState**: Terminal state indicating the workout is finished and ready for saving/syncing.
+
+---
+
+### Thread Safety & Concurrency Guarding
+
+- **Mutex Protection**: A Kotlin `Mutex` wraps all state mutations to ensure atomic execution across coroutines.
+- **Immediate Job Cancellation**: Any transition out of `RestTimerState` (`skipRest`, `pauseWorkout`, or `endWorkout`) immediately cancels the background timer coroutine under the mutex lock. This guarantees that 0ms race conditions cannot double-advance sets or leak background jobs.
+- this is done using WorkEngine class and interface state and then creating needed classes to express these states and being
+- controlled by WorkEngine 
