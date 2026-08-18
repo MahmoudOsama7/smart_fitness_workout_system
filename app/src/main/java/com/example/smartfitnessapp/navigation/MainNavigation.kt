@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.presentation.workOutHistory.WORKOUT_HISTORY_VIEW
+import com.example.presentation.workOutHistory.WorkoutHistoryViewNavigation
 import com.example.presentation.workOutView.WORKOUT_VIEW
 import com.example.presentation.workOutView.WorkoutViewNavigation
 
@@ -29,7 +31,14 @@ fun MainNavigation() {
                 route = MAIN_ROUTE
             ) {
                 composable(route = WORKOUT_VIEW) {
-                    WorkoutViewNavigation()
+                    WorkoutViewNavigation(
+                        onNavigateToWorkoutHistory = {
+                            navController.navigate(route = WORKOUT_HISTORY_VIEW)
+                        }
+                    )
+                }
+                composable(route = WORKOUT_HISTORY_VIEW) {
+                    WorkoutHistoryViewNavigation()
                 }
             }
         }

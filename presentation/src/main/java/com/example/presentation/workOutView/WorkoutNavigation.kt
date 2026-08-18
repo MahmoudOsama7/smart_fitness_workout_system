@@ -8,7 +8,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 const val WORKOUT_VIEW = "workout_view"
 
 @Composable
-fun WorkoutViewNavigation() {
+fun WorkoutViewNavigation(
+    onNavigateToWorkoutHistory: () -> Unit
+) {
     val viewModel: WorkoutViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val action = viewModel::onAction
@@ -16,7 +18,10 @@ fun WorkoutViewNavigation() {
     WorkoutViewScreen(
         contract = WorkoutViewContract(
             state = state,
-            action = action
+            action = action,
+            navigator = WorkoutNavigator(
+                onNavigateToHistory = onNavigateToWorkoutHistory
+            )
         )
     )
 }

@@ -5,6 +5,8 @@ import com.example.data.mapper.toWorkoutSessionEntity
 import com.example.database.database.WorkoutDAO
 import com.example.domain.model.WorkoutSession
 import com.example.domain.repository.WorkoutRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
@@ -19,4 +21,11 @@ class WorkoutRepositoryImpl @Inject constructor(
     override suspend fun getSavedCompletedWorkout(id: Long): WorkoutSession? {
         return dao.getWorkoutSessionById(sessionId = id)?.toWorkoutSession()
     }
+
+    override suspend fun getWorkoutHistoryList(): Flow<List<WorkoutSession>> {
+        return dao.getAllWorkoutSessions().map { entities ->
+            entities.map { entity -> entity.toWorkoutSession() }
+        }
+    }
+
 }
