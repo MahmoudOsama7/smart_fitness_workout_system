@@ -17,4 +17,10 @@ interface WorkoutDAO {
 
     @Query("SELECT * FROM workout_history ORDER BY timestamp DESC")
     fun getAllWorkoutSessions(): Flow<List<WorkoutSessionEntity>>
+
+    @Query("SELECT * FROM workout_history WHERE syncStatus = 'PENDING_SYNC'")
+    suspend fun getUnsyncedWorkouts(): List<WorkoutSessionEntity>
+
+    @Query("UPDATE workout_history SET syncStatus = 'SYNCED' WHERE id = :id")
+    suspend fun markAsSynced(id: Long)
 }

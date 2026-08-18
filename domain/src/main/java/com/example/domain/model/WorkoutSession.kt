@@ -6,6 +6,7 @@ enum class SyncStatus {
 }
 
 data class WorkoutSession(
+    val id: Long,
     val exerciseName: String,
     val currentSet: Int = 1,
     val totalSets: Int,

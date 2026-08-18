@@ -15,34 +15,6 @@ data class WorkoutUiState(
     val elapsedTimeSeconds: Long = 0L,
 
     val completedSets: Int = 0,
-
-    val history: List<WorkoutHistoryUiModel> = listOf(
-        WorkoutHistoryUiModel(
-            exerciseName = "Barbell Bench Press",
-            sets = "4",
-            weight = "60 kg",
-            duration = "08:42",
-            date = "16 Aug 2026",
-            syncStatus = "Synced"
-        ),
-        WorkoutHistoryUiModel(
-            exerciseName = "Squat",
-            sets = "3",
-            weight = "80 kg",
-            duration = "07:20",
-            date = "15 Aug 2026",
-            syncStatus = "Pending"
-        )
-    )
-)
-
-data class WorkoutHistoryUiModel(
-    val exerciseName: String,
-    val sets: String,
-    val weight: String,
-    val duration: String,
-    val date: String,
-    val syncStatus: String
 )
 
 enum class WorkoutStateType {

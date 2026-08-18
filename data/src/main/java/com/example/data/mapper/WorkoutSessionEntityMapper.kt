@@ -26,6 +26,7 @@ fun SyncStatus.toSyncStatusEntity(): SyncStatusEntity {
 
 fun WorkoutSessionEntity.toWorkoutSession(): WorkoutSession {
     return WorkoutSession(
+        id = id,
         exerciseName = exerciseName,
         currentSet = totalSets,
         totalSets = totalSets,
