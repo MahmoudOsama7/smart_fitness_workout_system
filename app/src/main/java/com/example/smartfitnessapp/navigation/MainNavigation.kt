@@ -43,7 +43,9 @@ fun MainNavigation() {
                     )
                 }
                 composable(route = WORKOUT_HISTORY_VIEW) {
-                    WorkoutHistoryViewNavigation()
+                    WorkoutHistoryViewNavigation(
+                        onBackPressed = navController::navigateUp
+                    )
                 }
                 composable(route = DYNAMIC_SETTINGS_VIEW) {
                     DynamicSettingsViewNavigation(

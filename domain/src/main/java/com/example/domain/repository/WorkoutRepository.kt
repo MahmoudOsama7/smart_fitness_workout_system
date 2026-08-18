@@ -8,4 +8,5 @@ interface WorkoutRepository {
     suspend fun getSavedCompletedWorkout(id: Long): WorkoutSession?
 
     suspend fun getWorkoutHistoryList(): Flow<List<WorkoutSession>>
+    suspend fun syncPendingWorkouts(): Result<List<WorkoutSession>>
 }

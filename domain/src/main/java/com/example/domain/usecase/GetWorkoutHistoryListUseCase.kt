@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 
-class GetWorkoutHistoryList @Inject constructor(
+class GetWorkoutHistoryListUseCase @Inject constructor(
     private val repository: WorkoutRepository
 ) {
     suspend operator fun invoke(): Flow<List<WorkoutSession>> {

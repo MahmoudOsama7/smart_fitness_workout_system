@@ -56,6 +56,7 @@ dependencies {
     implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.database)
+    implementation(projects.network)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -66,4 +67,5 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.hilt.android.compiler)
     implementation(libs.bundles.hilt)
+    implementation(libs.bundles.retrofit)
 }

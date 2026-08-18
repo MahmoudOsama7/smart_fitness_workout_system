@@ -19,6 +19,7 @@ class WorkoutEngine @Inject constructor(
     private val scope: CoroutineScope
 ) {
     var session: WorkoutSession = WorkoutSession(
+        id = 0L,
         exerciseName = "Barbell Squat",
         currentSet = 1,
         totalSets = 5,
