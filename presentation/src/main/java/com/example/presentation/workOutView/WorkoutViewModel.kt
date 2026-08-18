@@ -78,7 +78,8 @@ class WorkoutViewModel @Inject constructor(
                                 workoutState = WorkoutStateType.COMPLETED,
                                 completedSets = domainState.session.completedSets,
                                 exerciseName = domainState.session.exerciseName,
-                                currentWeight = formattedWeight
+                                currentWeight = formattedWeight,
+                                elapsedTimeSeconds = domainState.session.elapsedTimeSeconds
                             )
                         }
 
