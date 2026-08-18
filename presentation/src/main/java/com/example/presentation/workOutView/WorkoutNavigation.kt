@@ -9,7 +9,8 @@ const val WORKOUT_VIEW = "workout_view"
 
 @Composable
 fun WorkoutViewNavigation(
-    onNavigateToWorkoutHistory: () -> Unit
+    onNavigateToWorkoutHistory: () -> Unit,
+    onNavigateToDynamicSettings: () -> Unit
 ) {
     val viewModel: WorkoutViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -20,7 +21,8 @@ fun WorkoutViewNavigation(
             state = state,
             action = action,
             navigator = WorkoutNavigator(
-                onNavigateToHistory = onNavigateToWorkoutHistory
+                onNavigateToHistory = onNavigateToWorkoutHistory,
+                onNavigateToDynamicSettings = onNavigateToDynamicSettings
             )
         )
     )

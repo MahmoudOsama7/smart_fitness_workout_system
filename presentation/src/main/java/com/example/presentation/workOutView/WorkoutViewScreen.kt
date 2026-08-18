@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,13 +46,20 @@ fun WorkoutViewScreen(
 ) {
     val state = contract.state
     val actions = contract.action
+
+    LaunchedEffect(Unit) {
+        actions(WorkoutAction.RefreshSettings)
+    }
+
     Scaffold(
         topBar = {
             WorkoutTopBar(
                 onHistoryClick = {
                     contract.navigator.onNavigateToHistory()
                 },
-                onSettingsClick = {}
+                onSettingsClick = {
+                    contract.navigator.onNavigateToDynamicSettings()
+                }
             )
         }
     ) { paddingValues ->

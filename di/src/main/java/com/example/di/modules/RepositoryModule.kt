@@ -1,6 +1,8 @@
 package com.example.di.modules
 
+import com.example.data.repository.UserSettingsRepositoryImpl
 import com.example.data.repository.WorkoutRepositoryImpl
+import com.example.domain.repository.UserSettingsRepository
 import com.example.domain.repository.WorkoutRepository
 import dagger.Binds
 import dagger.Module
@@ -18,4 +20,10 @@ abstract class RepositoryModule {
     abstract fun bindWorkoutRepository(
         impl: WorkoutRepositoryImpl
     ): WorkoutRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserSettingsRepository(
+        impl: UserSettingsRepositoryImpl
+    ): UserSettingsRepository
 }

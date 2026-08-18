@@ -66,8 +66,11 @@ sealed interface WorkoutAction {
     data object ResumeWorkout : WorkoutAction
 
     data object EndWorkout : WorkoutAction
+    data object RefreshSettings : WorkoutAction
+
 }
 
 data class WorkoutNavigator(
     val onNavigateToHistory: () -> Unit,
+    val onNavigateToDynamicSettings: () -> Unit
 )

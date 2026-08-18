@@ -7,4 +7,5 @@ sealed interface WorkoutAction {
     data object PauseWorkout : WorkoutAction
     data object ResumeWorkout : WorkoutAction
     data object EndWorkout : WorkoutAction
+    data object RefreshSettings : WorkoutAction
 }

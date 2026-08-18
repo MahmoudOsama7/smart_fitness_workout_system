@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.presentation.dynamicSettings.DYNAMIC_SETTINGS_VIEW
+import com.example.presentation.dynamicSettings.DynamicSettingsViewNavigation
 import com.example.presentation.workOutHistory.WORKOUT_HISTORY_VIEW
 import com.example.presentation.workOutHistory.WorkoutHistoryViewNavigation
 import com.example.presentation.workOutView.WORKOUT_VIEW
@@ -34,11 +36,19 @@ fun MainNavigation() {
                     WorkoutViewNavigation(
                         onNavigateToWorkoutHistory = {
                             navController.navigate(route = WORKOUT_HISTORY_VIEW)
+                        },
+                        onNavigateToDynamicSettings = {
+                            navController.navigate(route = DYNAMIC_SETTINGS_VIEW)
                         }
                     )
                 }
                 composable(route = WORKOUT_HISTORY_VIEW) {
                     WorkoutHistoryViewNavigation()
+                }
+                composable(route = DYNAMIC_SETTINGS_VIEW) {
+                    DynamicSettingsViewNavigation(
+                        onBackPressed = navController::navigateUp
+                    )
                 }
             }
         }
